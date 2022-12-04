@@ -2,16 +2,17 @@
 #include <string.h>
 #include <stdlib.h>
 
+
 char* readFrom(Hashtable table, char* key)
 {
     int i = 0;
-    for (; i < table.len && !strcmp(table.key[i], key); i++);
+    for (; i < table.len && strcmp(table.key[i], key); i++);
     if (i == table.len)
         return NULL;
     return table.content[i];
 }
 
-char* getInstruction(char* line)
+struct IndexedString getInstruction(char* line)
 {
     Hashtable symbols = (Hashtable){ (char*[]){"add", "and", "cmp", "dec", "div", "inc", "lea", "mov", "mul", "neg", "not", "or", "shl", "shr", "sub", "xor", "bswap"}, (char*[]){"+=", "&&", "??", "--", "/=", "++", "<&", "<-", "*=", "=-", "=!", "||", "<<", ">>", "-=", "^^", "><"}, 17 };
     for (int i = 0; i < (int)strlen(line) - 2; i++)
@@ -19,10 +20,10 @@ char* getInstruction(char* line)
         char* tmp = strcpybtwn(line, i, i+2);
         char* symbol = readFrom(symbols, tmp);
         if (symbol)
-            return symbol;
+            return (struct IndexedString){symbol, i};
         free(tmp);
     }
-    return NULL;
+    return (struct IndexedString){NULL, -1};
 }
 
 int getRegCount(char* instruction)
@@ -45,28 +46,22 @@ char getLastChar(char* line)
     return line[i-1];
 }
 
+char* getFirstRegister(char* line)
+{
+    
+}
+
 void compiler(FILE* rdi, char* line)
 {
-    fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ');
-    return;
+    //fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ');
     Operation op;
-    op.instruction = getInstruction(line);
+    struct IndexedString str = getInstruction(line);
+    op.instruction = str.symbol;
     if (!op.instruction)
-        exit(1);
-    int regCount = getRegCount(op.instruction);
-    int i = 0;
-    for (; i < strlen(line)-2; i++)
     {
-        char* tmp = strcpybtwn(line, i, i+2);
-        if (!strcmp(tmp, op.instruction))
-            goto endFor;
-        free(tmp);
+        fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ');
+        return;
     }
-endFor:
-    if (i == (int)strlen(line) - 2)
-        exit(1);
-    int j = 0;
-    for (; j < strlen(line) && line[j] == ' '; j++);
-    if (j == strlen(line))
-        exit(1);
+    int regCount = getRegCount(op.instruction);
+    op.reg1 = getFirstRegister(line);
 }

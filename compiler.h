@@ -6,12 +6,6 @@
 
 typedef struct
 {
-    char* content;
-    char* key;
-} Entry;
-
-typedef struct
-{
     char** content;
     char** key;
     int len;
@@ -24,8 +18,14 @@ typedef struct
     char* instruction;
 } Operation;
 
+struct IndexedString
+{
+    char* symbol;
+    int index;
+};
+
 char* readFrom(Hashtable table, char* key);
-char* getInstruction(char* line);
+struct IndexedString getInstruction(char* line);
 void compiler(FILE* rdi, char* line);
 void printInstructions(FILE* rdi, Operation op);
 
