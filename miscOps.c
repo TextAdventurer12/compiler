@@ -41,7 +41,7 @@ int getLineCount(FILE* rsi)
     while (fread(&buf, 1, 1, rsi) == 1)
         if (buf == '\n')
             i++;
-    return i+1;
+    return i;
 }
 
 char* getLine(FILE* rsi, int lineNum)

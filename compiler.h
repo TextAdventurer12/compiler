@@ -26,7 +26,7 @@ struct IndexedString
 
 char* readFrom(Hashtable table, char* key);
 struct IndexedString getInstruction(char* line);
-void compiler(FILE* rdi, char* line);
+int compiler(FILE* rdi, char* line);
 void printInstructions(FILE* rdi, Operation op);
 
 #endif

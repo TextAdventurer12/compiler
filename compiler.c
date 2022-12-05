@@ -1,7 +1,7 @@
 #include "compiler.h"
 #include <string.h>
 #include <stdlib.h>
-
+#include "miscOps.h"
 
 char* readFrom(Hashtable table, char* key)
 {
@@ -48,20 +48,60 @@ char getLastChar(char* line)
 
 char* getFirstRegister(char* line)
 {
-    
+    int j = 0;
+    for (; j < strlen(line) && line[j] == ' '; j++);
+    if (j == strlen(line))
+            return NULL;
+    return strcpybtwn(line, j, j+3);
 }
 
-void compiler(FILE* rdi, char* line)
+char* getSecondRegister(char* line, int symIndex)
 {
-    //fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ');
+    symIndex += 2;
+    int i = (int)strlen(line);
+    for (; symIndex < strlen(line) && line[symIndex] == ' '; symIndex++);
+    if (symIndex >= i)
+        return NULL;
+    return strcpybtwn(line, symIndex, i);
+}
+
+void removeOperation(Operation op)
+{
+    if (op.reg1)
+        free(op.reg1);
+    if (op.reg2)
+        free(op.reg2);
+    return;
+}
+
+int compiler(FILE* rdi, char* line)
+{
     Operation op;
     struct IndexedString str = getInstruction(line);
+    if (!str.symbol)
+      return fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ') ? 1 : 1;
     op.instruction = str.symbol;
     if (!op.instruction)
-    {
-        fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ');
-        return;
-    }
+        return fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ') ? 2 : 2;
     int regCount = getRegCount(op.instruction);
     op.reg1 = getFirstRegister(line);
+    if (!op.reg1)
+        return fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ') ? 3 : 3;
+    if (regCount == 2)
+    {
+        op.reg2 = getSecondRegister(line, str.index);
+        if (!op.reg2)
+            return fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ') ? 4 : 4;
+        fprintf(rdi, "%s %s, %s", op.instruction, op.reg1, op.reg2);
+        removeOperation(op);
+        return 5;
+    }
+    if (regCount == 1)
+    {
+        fprintf(rdi, "%s %s", op.instruction, op.reg1);
+        removeOperation(op);
+        return 6;
+    }
+    fprintf(rdi, "%s%c", line, getLastChar(line) != '\n' ? '\n' : ' ');
+    return 0;
 }
