@@ -14,7 +14,7 @@ void parse(FILE* rsi, FILE* rdi)
         fseek(rsi, 0, SEEK_SET);
         char* line = getLine(rsi, i);
         if (!contains(line, '#'))
-            printf("%d\n", compiler(rdi, line));
+            compiler(rdi, line);
         else
             preProcessor(rdi, line);
     }
