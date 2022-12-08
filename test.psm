@@ -1,7 +1,10 @@
-section .text
-global _start:
-_start:
-rax <- 3
-rax += 2
-inc rax
-rax >> 1
+_put:
+    #P 0 rax rsi rdi
+
+    rsi <& [rbp+16]
+    rdi <- 1
+    rax <- 1
+    rdx <- 1
+    syscall
+
+    #E rax rsi rdi

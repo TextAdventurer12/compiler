@@ -112,3 +112,29 @@ int containsString(char* rsi, char* chk)
     }
     return 0;
 }
+
+char** nestMalloc(int a, int b)
+{
+    char** out = malloc(a*sizeof(char*));
+    if (!out)
+        exit(1);
+    for (int i = 0; i < a; i++)
+    {
+        out[i] = malloc(b);
+        if (!out[i])
+            exit(1);
+    }
+    return out;
+}
+void nestFree(char** ptr, int a)
+{
+    for (int i = 0; i < a; i++)
+        free(ptr[a]);
+    free(ptr);
+}
+char getSecondToLastChar(char* line)
+{
+    int lastIndex = (int)strlen(line) - 1;
+    int newLine = line[lastIndex] == '\n';
+    return line[lastIndex-1-newLine];
+}

@@ -1,0 +1,11 @@
+1: _put:
+2:     #P 0 rax rsi rdi
+4:     rsi <& [rbp+16]
+
+5:     rdi <- 1
+6:     rax <- 1
+7:     rdx <- 1
+8:     syscall
+10:     #E rax rsi rdi
+
+

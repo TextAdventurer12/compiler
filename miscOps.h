@@ -15,5 +15,8 @@ int rightBit(int n);
 int getBitCount(int n);
 int containsString(char* rsi, char* chk);
 char getSigChar(char* line);
+char** nestMalloc(int a, int b);
+void nestFree(char** ptr, int a);
+char getSecondToLastChar(char* line);
 
 #endif
