@@ -50,22 +50,13 @@ int main(int argc, char** argv)
 {
     if (argc != 3)
         return 1;
-    char psm[64];
-    char outName[64];
-    strcpy(psm, argv[1]);
-    strcpy(outName, argv[1]);
-    strcat(psm, ".psm");
-    strcat(outName, ".asm");
-    FILE* f = fopen(psm, "r");
+    FILE* f = fopen(argv[1], "r");
     if (!f)
         return 1;
-    FILE* out = fopen(outName, "w");
+    FILE* out = fopen(argv[2], "w");
     if (!out)
         return 1;
-    if (argv[2][0] == '1')
-        parse(f, out);
-    else
-        causeError(f, out);
+    parse(f, out);
 
     return 0;
 }
