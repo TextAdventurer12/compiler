@@ -26,11 +26,9 @@ int getLineLength(FILE* rsi, int lineNum)
         i++;
     fseek(rsi, i, SEEK_SET);
     int j = 0;
-    for (; buf != '\n'; j++)
-    {
+    for (; buf != '\n' && buf != EOF && buf != '\0'; j++)
         if (fread(&buf, 1, 1, rsi) != 1)
             return j;
-    }
     return j;
 }
 
@@ -59,12 +57,13 @@ char* getLine(FILE* rsi, int lineNum)
     fseek(rsi, 0, SEEK_SET);
     int lineLen = getLineLength(rsi, lineNum);
     fseek(rsi, lineStart, SEEK_SET);
-    char* line = malloc(lineLen);
+    char* line = malloc(lineLen+1);
     for (int i = 0; i < lineLen; i++)
         if (fread(&buf, 1, 1, rsi) == 1)
             line[i] = buf;
         else
             return line;
+    line[lineLen] = '\0';
     return line;
 }
 
@@ -79,9 +78,10 @@ char* strcpybtwn(char* rsi, int start, int end)
 {
     if (end < start)
         return NULL;
-    char* rdi = malloc(end - start);
+    char* rdi = malloc(end - start+1);
     for (int i  = start; i < end; i++)
         rdi[i - start] = rsi[i];
+    rdi[end-start] = '\0';
     return rdi;
 }
 

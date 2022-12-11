@@ -6,19 +6,70 @@
 char* readFrom(Hashtable table, char* key)
 {
     int i = 0;
-    for (; i < table.len && strcmp(table.key[i], key); i++);
+    for (; i < table.len && strcmp(table.key[i], key) != 0; i++);
+        //printf("[%s, %s]  ", table.key[i], key);
+    //printf("\n");
     if (i == table.len)
         return NULL;
     return table.content[i];
 }
 
+Hashtable* initSymbols()
+{
+    Hashtable* symbols = malloc(sizeof(symbols));
+    symbols->content = malloc(17 * sizeof(char*));
+    symbols->key = malloc(17 * sizeof(char*));
+    for(int i = 0; i < 17; i++)
+    {
+        symbols->content[i] = malloc(3);
+        symbols->key[i] = malloc(2);
+    }
+    symbols->content[0 ] = (char*)"add";
+    symbols->content[1 ] = (char*)"and";
+    symbols->content[2 ] = (char*)"cmp";
+    symbols->content[3 ] = (char*)"dec";
+    symbols->content[4 ] = "div";
+    symbols->content[5 ] = "inc";
+    symbols->content[6 ] = "lea";
+    symbols->content[7 ] = "mov";
+    symbols->content[8 ] = "mul";
+    symbols->content[9 ] = "neg";
+    symbols->content[10] = "not";
+    symbols->content[11] = "or ";
+    symbols->content[12] = "shl";
+    symbols->content[13] = "shr";
+    symbols->content[14] = "sub";
+    symbols->content[15] = "xor";
+    symbols->content[16] = "bswap";
+    symbols->key[0 ] = "+=";
+    symbols->key[1 ] = "&&";
+    symbols->key[2 ] = "??";
+    symbols->key[3 ] = "--";
+    symbols->key[4 ] = "/=";
+    symbols->key[5 ] = "++";
+    symbols->key[6 ] = "<&";
+    symbols->key[7 ] = "<-";
+    symbols->key[8 ] = "*=";
+    symbols->key[9 ] = "=-";
+    symbols->key[10] = "=!";
+    symbols->key[11] = "||";
+    symbols->key[12] = "<<";
+    symbols->key[13] = ">>";
+    symbols->key[14] = "-=";
+    symbols->key[15] = "^^";
+    symbols->key[16] = "><";
+    symbols->len = 17;
+    return symbols;
+}
+
 struct IndexedString getInstruction(char* line)
 {
-    Hashtable symbols = (Hashtable){ (char*[]){"add", "and", "cmp", "dec", "div", "inc", "lea", "mov", "mul", "neg", "not", "or", "shl", "shr", "sub", "xor", "bswap"}, (char*[]){"+=", "&&", "??", "--", "/=", "++", "<&", "<-", "*=", "=-", "=!", "||", "<<", ">>", "-=", "^^", "><"}, 17 };
+    Hashtable* symbols = initSymbols();
     for (int i = 0; i < (int)strlen(line) - 2; i++)
     {
         char* tmp = strcpybtwn(line, i, i+2);
-        char* symbol = readFrom(symbols, tmp);
+        char* symbol = readFrom(*symbols, tmp);
+        //printf("%p\n", symbol);
         if (symbol)
             return (struct IndexedString){symbol, i};
         free(tmp);

@@ -8,3 +8,6 @@ _put:
     syscall
 
     #E rax rsi rdi
+
+_start:
+_put('a', 1)
