@@ -7,82 +7,85 @@ char getSigChar(char* line)
     return line[i-1];
 }
 
-int getFileLen(FILE* rsi)
+int file_len(FILE* f)
 {
-    char curChar = 2;
-    int fLen;
-    while (fread(&curChar, 1, 1, rsi) == 1)
-        fLen++;
-    fseek(rsi, 0, SEEK_SET);
-    return fLen;
+    char cur = 2;
+    int len;
+    while (fread(&cur, 1, 1, rsi) == 1)
+        len++;
+    fseek(src, 0, SEEK_SET);
+    return len;
 }
 
-int getLineLength(FILE* rsi, int lineNum)
+int line_len(FILE* f, int num)
 {
     int lines = 0;
     char buf = 0;
     int i = 0;
-    for (; fread(&buf, 1, 1, rsi) == 1 && lines < lineNum; lines += buf == '\n' ? 1 : 0)
+    for (; fread(&buf, 1, 1, f) == 1 && lines < lineNum; lines += (buf == '\n'))
         i++;
-    fseek(rsi, i, SEEK_SET);
+    fseek(f, i, SEEK_SET);
     int j = 0;
     for (; buf != '\n' && buf != EOF && buf != '\0'; j++)
         if (fread(&buf, 1, 1, rsi) != 1)
             return j;
+    fseek(f, 0, SEEK_SET);
     return j;
 }
 
-int getLineCount(FILE* rsi)
+int line_count(FILE* f)
 {
     int i = 0;
     char buf;
-    while (fread(&buf, 1, 1, rsi) == 1)
+    while (fread(&buf, 1, 1, f) == 1)
         if (buf == '\n')
             i++;
+    fseek(f, 0, SEEK_SET)
     return i;
 }
 
-char* getLine(FILE* rsi, int lineNum)
+string get_line(FILE* src, int num)
 {
-    int lineStart = 0;
+    int l_stt = 0;
     char buf = 0;
-    for (int i = 0; i != lineNum; lineStart++)
-        if (fread(&buf, 1, 1, rsi) == 1)
+    for (int i = 0; i != num; l_stt++)
+        if (fread(&buf, 1, 1, src) == 1)
         {
             if (buf == '\n')
                 i++;
         }
         else
             break;
-    fseek(rsi, 0, SEEK_SET);
-    int lineLen = getLineLength(rsi, lineNum);
-    fseek(rsi, lineStart, SEEK_SET);
-    char* line = malloc(lineLen+1);
-    for (int i = 0; i < lineLen; i++)
-        if (fread(&buf, 1, 1, rsi) == 1)
+    fseek(src, 0, SEEK_SET);
+    int l_len = getLineLength(src, num);
+    fseek(src, l_stt, SEEK_SET);
+    string line = malloc(l_len+1);
+    for (int i = 0; i < l_len; i++)
+        if (fread(&buf, 1, 1, src) == 1)
             line[i] = buf;
         else
             return line;
-    line[lineLen] = '\0';
+    line[l_len] = '\0';
     return line;
 }
 
-int contains(char* arr, char chk)
+int contains(string str, char chk)
 {
-    int i = 0;
-    for (; i < strlen(arr) && arr[i] != chk; i++);
-    return i != strlen(arr);
+    for (int i = 0; i < strlen(str); i++)
+        if (str[i] == chk)
+            return 1;
+    return 0;
 }
 
-char* strcpybtwn(char* rsi, int start, int end)
+string strcpybtwn(string src, int start, int end)
 {
     if (end < start)
         return NULL;
-    char* rdi = malloc(end - start+1);
+    string dst = malloc(end - start+1);
     for (int i  = start; i < end; i++)
-        rdi[i - start] = rsi[i];
-    rdi[end-start] = '\0';
-    return rdi;
+        dst[i - start] = src[i];
+    dst[end-start] = '\0';
+    return dst;
 }
 
 int rightBit(int n)
